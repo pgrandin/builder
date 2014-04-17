@@ -1,0 +1,19 @@
+features=`grep flags /proc/cpuinfo |uniq|cut -c 10-`
+cpus=`grep -c processor /proc/cpuinfo`
+NOCOLOR="yes" /usr/bin/emerge-webrsync
+echo "MAKEOPTS=\"-j${cpus}\"" >> /etc/portage/make.conf
+echo "USE=\"\${USE} ${features}\"" >> /etc/portage/make.conf
+
+#echo '
+#                                           . 
+#     .vir.                                d$b 
+#  .d$$$$$$b.    .cd$$b.     .d$$b.   d$$$$$$$$$$$b  .d$$b.      .d$$b. 
+#  $$$$( )$$$b d$$$()$$$.   d$$$$$$$b Q$$$$$$$P$$$P.$$$$$$$b.  .$$$$$$$b. 
+#  Q$$$$$$$$$$B$$$$$$$$P"  d$$$PQ$$$$b.   $$$$.   .$$$P  `$$$ .$$$P  `$$$ 
+#    "$$$$$$$P Q$$$$$$$b  d$$$P   Q$$$$b  $$$$b   $$$$b..d$$$ $$$$b..d$$$ 
+#   d$$$$$$P"   "$$$$$$$$ Q$$$     Q$$$$  $$$$$   `Q$$$$$$$P  `Q$$$$$$$P 
+#  $$$$$$$P       `"""""   ""        ""   Q$$$P     "Q$$$P"     "Q$$$P" 
+#  `Q$$P"                                  """ 
+#'
+
+chmod -x /etc/local.d/01_firstboot.sh

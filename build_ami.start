@@ -1,0 +1,6 @@
+tmux new-session -s "build_ami" -n "compute" -d
+tmux new-window -t "build" -n "build"
+
+tmux select-window -t "build"
+tmux send-keys -t :build "cd /var/pgn && time bash build_ami.sh" Enter
+
