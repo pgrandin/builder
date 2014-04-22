@@ -3,6 +3,8 @@ cpus=`grep -c processor /proc/cpuinfo`
 NOCOLOR="yes" /usr/bin/emerge-webrsync
 echo "MAKEOPTS=\"-j${cpus}\"" >> /etc/portage/make.conf
 echo "USE=\"\${USE} ${features}\"" >> /etc/portage/make.conf
+echo 'USE="${USE} mysql sqlite python conntrack augeas virt-network -monitor"' >> /etc/portage/make.conf
+emerge -q eix && eix-update
 
 #echo '
 #                                           . 
