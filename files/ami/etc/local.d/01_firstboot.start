@@ -16,4 +16,4 @@ echo "USE=\"\${USE} ${features}\"" >> /etc/portage/make.conf
 #  `Q$$P"                                  """ 
 #'
 
-chmod -x /etc/local.d/01_firstboot.sh
+chmod -x /etc/local.d/01_firstboot.start
