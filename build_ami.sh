@@ -64,11 +64,10 @@ cp /usr/share/zoneinfo/America/New_York /etc/localtime
 echo "America/New_York" > /etc/timezone
 echo 'rc_nocolor="yes"' >> /etc/rc.conf
 
-emerge -q =gentoo-sources-3.10.17
+emerge -q =gentoo-sources-3.12.13
 pushd /usr/src/linux
 wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
 make -j$num_cpu && make modules_install
-
 cp arch/x86_64/boot/bzImage /boot/gentoo-kvm
 make clean
 popd
@@ -135,33 +134,25 @@ GOF
 
 emerge -q genkernel
 USE="-perl" emerge -q dev-vcs/git
-pushd /root
+pushd /usr/src/
 git clone https://github.com/pgrandin/gentoo-cloud-initramfs.git
-genkernel --initramfs-overlay=/root/gentoo-cloud-initramfs/overlay --linuxrc=/root/gentoo-cloud-initramfs/linuxrc --install initramfs
+genkernel --initramfs-overlay=/usr/src/gentoo-cloud-initramfs/overlay --linuxrc=/usr/src/gentoo-cloud-initramfs/linuxrc --install initramfs
 popd
+
+emerge -q vixie-cron syslog-ng
+rc-update add vixie-cron
+rc-update add syslog-ng
 EOF
 
 chroot $MYROOT /bin/bash /stage2.sh
 popd
-rsync -rtza files/ami/ $MYROOT/
-
-cat > $MYROOT/setup_OS.sh << EOF
-emerge -q layman eix
-cat >> /etc/portage/make.conf << POF
-source /var/lib/layman/make.conf 
-POF
-wget https://raw.github.com/pgrandin/openstack-overlay/master/openstack-overlay.xml -O /etc/layman/overlays/openstack-overlay.xml
-layman -L
-layman -a openstack
-eix-update
-emerge -q tmux
-#emerge -q =nova-2013.2-r1
-EOF
-
-chroot $MYROOT /bin/bash /setup_OS.sh
-
 
 pushd $MYROOT
+rsync -vrtza files/ami/ $MYROOT/
+for script in etc/local.d/*.setup; do
+  chroot $MYROOT /bin/bash $script
+done
+
 umount -l proc dev sys tmp var/tmp usr/portage
 popd
 
@@ -172,9 +163,9 @@ rm -R $MYROOT/root/.config/
 rm $MYROOT/etc/ssh/ssh_host_*
 
 d=`date -u +"%Y%m%d-%H%M"`
-qemu-img convert $image -O qcow2 /var/pgn/gentoo-${d}.qcow2
+qemu-img convert $image -O qcow2 $SOURCEDIR/gentoo-${d}.qcow2
 #rm $image
 
 sync
-echo "All good! :) You can run 'build.sh gentoo-${d}' on the controller."
 
+bash build_ami.sh ${d}
