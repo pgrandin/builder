@@ -147,8 +147,9 @@ EOF
 chroot $MYROOT /bin/bash /stage2.sh
 popd
 
+rsync -vrtza $SOURCEDIR/files/ami/ $MYROOT/
+
 pushd $MYROOT
-rsync -vrtza files/ami/ $MYROOT/
 for script in etc/local.d/*.setup; do
   chroot $MYROOT /bin/bash $script
 done
@@ -157,10 +158,6 @@ umount -l proc dev sys tmp var/tmp usr/portage
 popd
 
 rm -R $MYROOT/var/cache/*
-rm $MYROOT/root/.bash_history
-rm $MYROOT/root/.known_hosts
-rm -R $MYROOT/root/.config/
-rm $MYROOT/etc/ssh/ssh_host_*
 
 d=`date -u +"%Y%m%d-%H%M"`
 qemu-img convert $image -O qcow2 $SOURCEDIR/gentoo-${d}.qcow2
