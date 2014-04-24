@@ -64,9 +64,11 @@ cp /usr/share/zoneinfo/America/New_York /etc/localtime
 echo "America/New_York" > /etc/timezone
 echo 'rc_nocolor="yes"' >> /etc/rc.conf
 
-emerge -q =gentoo-sources-3.12.13
+# emerge -q =gentoo-sources-3.12.13
+emerge -q =gentoo-sources-3.10.17
 pushd /usr/src/linux
-wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
+#wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
+wget https://raw.githubusercontent.com/pgrandin/kernel-configs/33e2c132aa69a84f06746061562852fb6c57a16c/kvm-kernel.config -O .config
 make -j$num_cpu && make modules_install
 cp arch/x86_64/boot/bzImage /boot/gentoo-kvm
 make clean
@@ -159,10 +161,11 @@ popd
 
 rm -R $MYROOT/var/cache/*
 
+sync
 d=`date -u +"%Y%m%d-%H%M"`
 qemu-img convert $image -O qcow2 $SOURCEDIR/gentoo-${d}.qcow2
 #rm $image
 
 sync
 
-bash build_ami.sh ${d}
+bash build_ami.sh.postrun ${d}
