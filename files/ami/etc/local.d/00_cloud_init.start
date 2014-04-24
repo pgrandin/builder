@@ -1,5 +1,5 @@
 # cloud-init init
-hostname `wget -q -O - http://169.254.169.254/2008-02-01/meta-data/hostname`
+hostname `curl -s http://169.254.169.254/2008-02-01/meta-data/hostname`
 if [ ! -d /root/.ssh ]; then
 	mkdir -p /root/.ssh
 	chmod 0700 /root/.ssh
