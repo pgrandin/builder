@@ -1,21 +1,11 @@
 features=`grep flags /proc/cpuinfo |uniq|cut -c 10-`
 cpus=`grep -c processor /proc/cpuinfo`
-NOCOLOR="yes" /usr/bin/emerge-webrsync
 echo "MAKEOPTS=\"-j${cpus}\"" >> /etc/portage/make.conf
 echo "USE=\"\${USE} ${features}\"" >> /etc/portage/make.conf
 echo 'USE="${USE} mysql sqlite python conntrack augeas virt-network -monitor"' >> /etc/portage/make.conf
-emerge -q eix && eix-update
 
-#echo '
-#                                           . 
-#     .vir.                                d$b 
-#  .d$$$$$$b.    .cd$$b.     .d$$b.   d$$$$$$$$$$$b  .d$$b.      .d$$b. 
-#  $$$$( )$$$b d$$$()$$$.   d$$$$$$$b Q$$$$$$$P$$$P.$$$$$$$b.  .$$$$$$$b. 
-#  Q$$$$$$$$$$B$$$$$$$$P"  d$$$PQ$$$$b.   $$$$.   .$$$P  `$$$ .$$$P  `$$$ 
-#    "$$$$$$$P Q$$$$$$$b  d$$$P   Q$$$$b  $$$$b   $$$$b..d$$$ $$$$b..d$$$ 
-#   d$$$$$$P"   "$$$$$$$$ Q$$$     Q$$$$  $$$$$   `Q$$$$$$$P  `Q$$$$$$$P 
-#  $$$$$$$P       `"""""   ""        ""   Q$$$P     "Q$$$P"     "Q$$$P" 
-#  `Q$$P"                                  """ 
-#'
+export NOCOLOR="yes"
+/usr/bin/emerge-webrsync
+time emerge -q eix && eix-update
 
 chmod -x /etc/local.d/01_firstboot.start
