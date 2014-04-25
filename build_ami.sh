@@ -168,4 +168,9 @@ qemu-img convert $image -O qcow2 $SOURCEDIR/gentoo-${d}.qcow2
 
 sync
 
-bash build_ami.sh.postrun ${d}
+source keystone.credentials
+
+glance image-delete gentoo-${d} 
+glance image-create --name gentoo-${d} --is-public true --container-format bare --disk-format qcow2  < gentoo-${d}.qcow2
+
+
