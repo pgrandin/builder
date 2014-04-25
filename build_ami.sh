@@ -141,7 +141,7 @@ git clone https://github.com/pgrandin/gentoo-cloud-initramfs.git
 genkernel --initramfs-overlay=/usr/src/gentoo-cloud-initramfs/overlay --linuxrc=/usr/src/gentoo-cloud-initramfs/linuxrc --install initramfs
 popd
 
-emerge -q vixie-cron syslog-ng
+emerge -q vixie-cron syslog-ng virt-what
 rc-update add vixie-cron
 rc-update add syslog-ng
 EOF
