@@ -54,7 +54,7 @@ SOURCEDIR="/var/pgn"
 MYROOT="/mnt/build-${TAG}-s4"
 [ -d $MYROOT ] || mkdir $MYROOT
 
-STAGEFILE="stage3-amd64-nomultilib-20140206.tar.bz2"
+STAGEFILE="stage3-amd64-20140410.tar.bz2"
 STAGE=3
 
 image="sdcard.img"
@@ -63,7 +63,7 @@ image="sdcard.img"
 # setup_virtdisk
 # mount /dev/mapper/nbd0p2 $MYROOT
 
-http_proxy="" wget -c http://distfiles.gentoo.org/releases/amd64/current-stage3/${STAGEFILE} -O ${SOURCEDIR}/${STAGEFILE} || exit 3
+http_proxy="" wget -c http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64/${STAGEFILE} -O ${SOURCEDIR}/${STAGEFILE} || exit 3
 set -x
 pushd ${SOURCEDIR}
 STAGEFILE4=`ls -rt stage4-${TAG}-basic-*.tar.bz2 |tail -n1`
