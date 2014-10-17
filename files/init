@@ -1,0 +1,30 @@
+#!/bin/busybox sh
+
+mount -t proc none /proc 
+mount -t sysfs none /sys 
+mount -t devtmpfs none /dev
+
+echo "Initial root disk loaded. Proceeding."
+mkdir -p /mnt/0
+mount /dev/sda1 /mnt/0
+
+mkdir -p /mnt/1
+mount /mnt/0/filesystem.squash /mnt/1
+
+mkdir -p /mnt/2
+mount -t tmpfs -o size=100M tmpfs /mnt/2
+
+mkdir -p /mnt/3
+mount -t unionfs -o dirs=/mnt/2=rw:/mnt/1=ro /mnt/1 /mnt/3
+
+cd /mnt/3
+
+# Clean up. 
+umount /proc 
+umount /sys 
+umount /dev
+
+# Boot the real thing. 
+exec switch_root /mnt/3 /sbin/init 
+
+/bin/busybox sh
