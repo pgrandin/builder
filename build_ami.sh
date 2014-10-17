@@ -64,11 +64,12 @@ cp /usr/share/zoneinfo/America/New_York /etc/localtime
 echo "America/New_York" > /etc/timezone
 echo 'rc_nocolor="yes"' >> /etc/rc.conf
 
-# emerge -q =gentoo-sources-3.12.13
-emerge -q =gentoo-sources-3.10.17
+kversion="3.10.25"
+kversion="3.12.13"
+emerge -q =gentoo-sources-\$kversion
 pushd /usr/src/linux
-#wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
-wget https://raw.githubusercontent.com/pgrandin/kernel-configs/33e2c132aa69a84f06746061562852fb6c57a16c/kvm-kernel.config -O .config
+wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
+#wget https://raw.githubusercontent.com/pgrandin/kernel-configs/33e2c132aa69a84f06746061562852fb6c57a16c/kvm-kernel.config -O .config
 make -j$num_cpu && make modules_install
 cp arch/x86_64/boot/bzImage /boot/gentoo-kvm
 make clean
@@ -106,7 +107,7 @@ timeout 0
 title GNU/Linux-Gentoo
 root (hd0,0)
 kernel (hd0,0)/boot/gentoo-kvm root=/dev/vda1 panic=10 console=tty0 console=ttyS0,115200n8
-initrd /boot/initramfs-genkernel-x86_64-3.10.17-gentoo
+initrd /boot/initramfs-genkernel-x86_64-\${kversion}-gentoo
 GOF
 
 cat > /boot/grub/grub.cfg << GOF
@@ -121,7 +122,7 @@ set timeout=5
 set root='(hd0,0)'
 menuentry "Gentoo" {
   linux (hd0,msdos1)/boot/gentoo-kvm root=/dev/vda1 panic=10 console=tty0 console=ttyS0,115200n8
-  initrd (hd0,msdos1)/boot/initramfs-genkernel-x86_64-3.10.17-gentoo
+  initrd (hd0,msdos1)/boot/initramfs-genkernel-x86_64-\${kversion}-gentoo
 }
 GOF
 
