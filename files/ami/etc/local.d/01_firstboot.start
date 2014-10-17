@@ -6,6 +6,6 @@ echo 'USE="${USE} mysql sqlite python conntrack augeas virt-network -monitor"' >
 
 export NOCOLOR="yes"
 /usr/bin/emerge-webrsync
-time emerge -q eix && eix-update
+time emerge -q eix && eix-update || exit
 
 chmod -x /etc/local.d/01_firstboot.start
