@@ -106,7 +106,7 @@ EOF
 
 	cp /usr/bin/qemu-static-arm-binfmt usr/bin/qemu-static-arm-binfmt || exit -1
 	cp /usr/bin/qemu-static-arm usr/bin/qemu-static-arm || exit -1
-	cp /usr/bin/qemu-arm usr/bin/qemu-arm || exit -1
+	cp /usr/bin/qemu-static-arm usr/bin/qemu-arm || exit -1
 
 	cat > perform_stage4.sh << EOF
 export MAKEOPTS="-j24"
