@@ -3,9 +3,8 @@
 [ -f /usr/sbin/nbd-client ] || emerge -q sys-block/nbd
 [ -f /sbin/kpartx ] || emerge -q multipath-tools
 [ -f /usr/bin/qemu-img ] || emerge -q app-emulation/qemu
-modprobe nbd
-
-/etc/init.d/qemu-binfmt restart
+[ -f /usr/bin/mksquashfs ] || emerge -q sys-fs/squashfs-tools
+modprobe nbd 
 
 control_c()
 # run if user hits control-c
@@ -51,6 +50,7 @@ trap control_c SIGINT
 
 TAG="nuc"
 SOURCEDIR="/var/pgn"
+IMAGEDIR="${SOURCEDIR}/images/"
 MYROOT="/mnt/build-${TAG}-s4"
 [ -d $MYROOT ] || mkdir $MYROOT
 
@@ -63,9 +63,9 @@ image="sdcard.img"
 # setup_virtdisk
 # mount /dev/mapper/nbd0p2 $MYROOT
 
-http_proxy="" wget -c http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64/${STAGEFILE} -O ${SOURCEDIR}/${STAGEFILE} || exit 3
+http_proxy="" wget -c http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64/${STAGEFILE} -O ${IMAGEDIR}/${STAGEFILE} || exit 3
 set -x
-pushd ${SOURCEDIR}
+pushd ${IMAGEDIR}
 STAGEFILE4=`ls -rt stage4-${TAG}-basic-*.tar.bz2 |tail -n1`
 #STAGEFILE4=`ls -rt stage4-${TAG}-nvt*.tar.bz2 |tail -n1`
 if [[ -z $STAGEFILE4 ]]; then
@@ -77,8 +77,8 @@ else
 fi
 popd
 
-cd $MYROOT
-tar xjpf ${SOURCEDIR}/${STAGEFILE}
+pushd $MYROOT
+tar xjpf ${IMAGEDIR}/${STAGEFILE}
 mkdir usr/portage
 
 if [[ $STAGE -eq 3 ]]; then
@@ -117,8 +117,8 @@ EOF
 	rm etc/resolv.conf
 	rm perform_stage4.sh
 	d=`date -u +"%Y%m%d-%H%M"`
-	mksquashfs * /var/pgn/stage4-${TAG}-basic-${d}.squashfs
-	tar cjpf /var/pgn/stage4-${TAG}-basic-${d}.tar.bz2 .
+	mksquashfs * ${IMAGEDIR}/stage4-${TAG}-basic-${d}.squashfs
+	tar cjpf ${IMAGEDIR}/stage4-${TAG}-basic-${d}.tar.bz2 .
 fi
 
 
@@ -161,8 +161,8 @@ EOF
 chroot . /bin/bash /perform_stage4-2.sh || exit -1
 umount -l proc dev sys tmp var/tmp usr/portage
 d=`date -u +"%Y%m%d-%H%M"`
-time mksquashfs * /var/pgn/livecd-${TAG}-nvt-${d}.squashfs
-tar cjpf /var/pgn/stage4-${TAG}-nvt-${d}.tar.bz2 .
+time mksquashfs * ${IMAGEDIR}/livecd-${TAG}-nvt-${d}.squashfs
+tar cjpf ${IMAGEDIR}/stage4-${TAG}-nvt-${d}.tar.bz2 .
 
 
 umount $MYROOT
