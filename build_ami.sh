@@ -22,10 +22,9 @@ setup_virtdisk()
 
 image="/root/gentoo.img"
 
-STAGEFILE="stage3-amd64-nomultilib-20140213.tar.bz2"
-STAGEFILE="stage3-amd64-20140410.tar.bz2"
+STAGEFILE="stage3-amd64-20161208.tar.bz2"
 TAG="instance"
-SOURCEDIR="/var/pgn"
+SOURCEDIR="/mnt/workspace"
 MYROOT="/mnt/build-${TAG}-s4"
 
 rm $SOURCEDIR/*.qcow2
@@ -58,14 +57,14 @@ cat > stage2.sh << EOF
 env-update
 source /etc/profile
 export PS1="(chroot) \$PS1"
+emerge-webrsync
 
 #eselect profile set default/linux/amd64/13.0/no-multilib
 cp /usr/share/zoneinfo/America/New_York /etc/localtime
 echo "America/New_York" > /etc/timezone
 echo 'rc_nocolor="yes"' >> /etc/rc.conf
 
-kversion="3.10.25"
-kversion="3.12.13"
+kversion="4.4.26"
 emerge -q =gentoo-sources-\$kversion
 pushd /usr/src/linux
 wget https://raw.github.com/pgrandin/kernel-configs/master/kvm-kernel.config -O .config
@@ -91,8 +90,10 @@ rc-update add sshd default
 popd
 
 mkdir -p /etc/portage/package.keywords
-echo "=sys-boot/grub-0.97-r13 ~amd64" >> /etc/portage/package.keywords/grub
-emerge -q =grub-0.97-r13
+mkdir -p /etc/portage/package.use
+echo '>=sys-libs/ncurses-6.0-r1 abi_x86_32' > /etc/portage/package.use/grub
+emerge -q =grub-0.97-r16
+
 emerge -q vim
 
 mkdir -p /boot/grub/
